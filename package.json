@@ -1,0 +1,31 @@
+{
+  "name": "verb-push",
+  "description": "Verb plugin for pushing templates in a verb stream as vinyl file objects.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/jonschlinkert/verb-push",
+  "author": {
+    "name": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert"
+  },
+  "repository": "jonschlinkert/verb-push",
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/verb-push/issues"
+  },
+  "license": "MIT",
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "mocha": "*",
+    "verb": "^0.4.5"
+  },
+  "keywords": []
+}
