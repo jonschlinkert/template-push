@@ -1,14 +1,15 @@
 /*!
- * verb-push <https://github.com/jonschlinkert/verb-push>
- *
- * Based on https://github.com/doowb/assemble-push
- * Copyright (c) 2014-2015, Brian Woodward.
+ * template-push <https://github.com/jonschlinkert/template-push>
  *
  * Copyright (c) 2014-2015, Jon Schlinkert.
  * Licensed under the MIT License.
  */
 
 'use strict';
+
+var File = require('vinyl');
+var through = require('through2');
+var toVinyl = require('to-vinyl');
 
 /**
  * Expose `push`
@@ -17,19 +18,22 @@
 module.exports = push;
 
 /**
- * Returns a function that takes the current instance of `verb`.
+ * Returns a function that takes the current instance of `app`.
  *
  * ```js
- * var verb = require('verb');
- * var push = require('verb-push')(verb);
+ * var app = require('your-app');
+ * var appPush = require('template-push')(app);
  * ```
  *
- * @param {Object} `verb` Current instance of verb.
+ * @param {Object} `app` Instance of app.
  * @return {Function} Factory function used to build a stream.
  * @api public
  */
 
-function push(verb) {
+function push(app) {
+  if (!app || typeof app.views === 'undefined') {
+    throw new Error('template-push expects `app` to be an instance of Template.');
+  }
 
   /**
    * Returns a stream that pushes a collection of templates
@@ -37,46 +41,50 @@ function push(verb) {
    *
    * ```js
    * // create a new arbitrary template type (collection)
-   * verb.create('foo', {isRenderable: true});
+   * app.create('foo', {isRenderable: true});
    *
    * // Load `foo` templates
-   * verb.foo('about-verb.md', {content: '...'});
+   * app.foo('about-app.md', {content: '...'});
    *
    * // push the `foo` collection into the stream to be rendered
-   * verb.task('default', function () {
-   *   push('foo').pipe(verb.dest('dist/'));
+   * app.task('default', function () {
+   *   appPush('foo').pipe(app.dest('dist/'));
    * });
    * ```
    *
-   * @param  {String} `collection` Name of the collection to push into the stream.
+   * @name appPush
+   * @param  {String} `name` Name of the collection to push into the stream.
    * @return {Stream} Stream used in piping objects through.
    * @api public
    */
 
-  return function push(collection) {
-    setRenderables(collection);
+  return function(name) {
+    var isString = typeof name === 'string';
+    if (!isString && typeof name !== 'object') {
+      throw new TypeError('template-push expects collection `name` to be a string or object.');
+    }
 
-    var tutils = require('template-utils');
-    var through = require('through2');
+    var session = app.session;
+    var loaded = session.get('loaded') || [];
+    loaded.push(name);
+    session.set('loaded', loaded);
 
-    var source = through.obj();
+    var stream = through.obj();
     var pass = through.obj();
-    source.pipe(pass);
+    stream.pipe(pass);
 
-    var obj = verb.views[collection] || {};
+    var collection = isString
+      ? (app.views[name] || {})
+      : name;
+
     process.nextTick(function () {
-      Object.keys(obj).forEach(function (key) {
-        source.write(tutils.toVinyl(obj[key]));
-      });
-      source.end();
+      for (var key in collection) {
+        if (collection.hasOwnProperty(key)) {
+          stream.write(toVinyl(collection[key], File));
+        }
+      }
+      stream.end();
     });
     return pass;
   };
-
-  function setRenderables(collection) {
-    var session = verb.session;
-    var loaded = session.get('loaded') || [];
-    loaded.push(collection);
-    session.set('loaded', loaded);
-  }
-};
+}
