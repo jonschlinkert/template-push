@@ -1,17 +1,23 @@
 {
-  "name": "verb-push",
-  "description": "Verb plugin for pushing templates in a verb stream as vinyl file objects.",
-  "version": "0.1.0",
-  "homepage": "https://github.com/jonschlinkert/verb-push",
+  "name": "template-push",
+  "description": "Push template collections in a vinyl stream.",
+  "version": "0.1.1",
+  "homepage": "https://github.com/jonschlinkert/template-push",
   "author": {
     "name": "Jon Schlinkert",
     "url": "https://github.com/jonschlinkert"
   },
-  "repository": "jonschlinkert/verb-push",
-  "bugs": {
-    "url": "https://github.com/jonschlinkert/verb-push/issues"
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jonschlinkert/template-push.git"
   },
-  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/template-push/issues"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/jonschlinkert/template-push/blob/master/LICENSE"
+  },
   "files": [
     "index.js"
   ],
@@ -22,10 +28,22 @@
   "scripts": {
     "test": "mocha"
   },
-  "dependencies": {},
+  "dependencies": {
+    "through2": "^0.6.5",
+    "to-vinyl": "^0.1.2",
+    "vinyl": "^0.4.6"
+  },
   "devDependencies": {
     "mocha": "*",
-    "verb": "^0.4.5"
+    "should": "*",
+    "verb": "^0.7.4"
   },
-  "keywords": []
+  "keywords": [
+    "assemble",
+    "file",
+    "template",
+    "templates",
+    "verb",
+    "vinyl"
+  ]
 }
